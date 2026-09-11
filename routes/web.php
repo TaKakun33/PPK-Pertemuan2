@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskCollaborationController;
 
@@ -13,3 +14,9 @@ Route::post('/tasks/{id}/collaborators', [TaskCollaborationController::class, 'a
 Route::delete('/tasks/{taskId}/collaborators/{userId}', [TaskCollaborationController::class, 'removeCollaborator'])->name('tasks.collaborators.remove');
 Route::patch('/tasks/{id}/status', [TaskCollaborationController::class, 'updateStatus'])->name('tasks.status.update');
 
+Route::get('/tasks', function () {
+    return view('tasks.index', ['tasks' => \App\Models\Task::latest()->get()]);
+});
+
+Route::get('/tasks/create', [TaskController::class, 'create']);
+Route::post('/tasks', [TaskController::class, 'store']);
