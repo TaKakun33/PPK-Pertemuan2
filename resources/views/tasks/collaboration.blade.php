@@ -24,7 +24,7 @@
     @endif
 
     <!-- INFORMASI TUGAS -->
-    <h1>Detail Tugas: {{ $task->nama_tugas }}</h1>
+    <h1>Detail Tugas: {{ $task->judul }}</h1>
     <p><strong>Prioritas:</strong> {{ $task->prioritas ?? '-' }}</p>
     <p><strong>Tenggat Waktu:</strong> {{ $task->tenggat_waktu ?? '-' }}</p>
     <p><strong>Pemilik Tugas:</strong> {{ $task->owner->name ?? 'User ID: ' . $task->user_id }}</p>

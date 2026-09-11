@@ -15,7 +15,13 @@
 
     <ul>
         @forelse ($tasks as $task)
-            <li>[Daftar {{ $task->task_list_id }}] {{ $task->judul }}</li>
+            <li>
+                [Daftar {{ $task->task_list_id }}] {{ $task->judul }} 
+                <span style="color: {{ $task->status === 'Selesai' ? 'green' : ($task->status === 'Sedang Dikerjakan' ? 'orange' : 'red') }};">
+                    [{{ $task->status }}]
+                </span>
+                <a href="{{ route('tasks.collaboration.show', $task->id) }}"> | Kelola Kolaborasi</a>
+            </li>
         @empty
             <li>Belum ada tugas.</li>
         @endforelse
