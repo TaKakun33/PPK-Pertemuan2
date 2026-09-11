@@ -13,9 +13,16 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
+            
+            // Tambahkan baris user_id ini
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            
             $table->unsignedBigInteger('task_list_id');
             $table->string('judul');
             $table->timestamps();
+            
+            // Opsional: jika Anda sudah punya tabel task_lists, sekalian buat foreign key-nya:
+            // $table->foreign('task_list_id')->references('id')->on('task_lists')->cascadeOnDelete();
         });
     }
 

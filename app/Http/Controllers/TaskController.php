@@ -15,12 +15,22 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'task_list_id' => ['required', 'integer'],
-            'judul' => ['required', 'string', 'max:255'],
+            'task_list_id' => 'required',
+            'judul' => 'required',
         ]);
 
-        Task::create($validated);
+        // Langsung buat task melalui relasi user
+        $request->user()->tasks()->create($validated);
 
-        return redirect()->to('/tasks')->with('success', 'Tugas berhasil ditambahkan.');
+        return redirect()->route('tasks.index')->with('success', 'Task berhasil dibuat!');
+    }
+
+    public function index()
+    {
+        // Mengambil task milik user yang sedang login
+        $tasks = auth()->user()->tasks; 
+        
+        // Pastikan Anda sudah membuat file view: resources/views/tasks/index.blade.php
+        return view('tasks.index', compact('tasks'));
     }
 }

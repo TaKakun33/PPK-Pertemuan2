@@ -23,6 +23,13 @@
             <p class="text-muted" style="margin-top: 8px;">
                 Anda login sebagai <strong>{{ Auth::user()->role }}</strong>.
             </p>
+            
+            <!-- Tombol untuk menuju halaman tasks -->
+            <div style="margin-top: 24px;">
+                <a href="{{ route('tasks.index') }}" style="display: inline-block; padding: 10px 20px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                    Atur Tugas
+                </a>
+            </div>
         </div>
     </div>
 @endsection
