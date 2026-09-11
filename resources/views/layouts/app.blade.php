@@ -33,6 +33,7 @@
         .btn-logout { background: #DC2626; border: none; color: #fff; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; }
         .btn-logout:hover { background: #B91C1C; }
     </style>
+    <title>JARA</title>
 </head>
 <body>
     @yield('content')
