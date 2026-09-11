@@ -29,4 +29,16 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relasi: Tugas-tugas di mana user ini menjadi kolaborator (FR-05)
+    public function collaboratedTasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user')->withTimestamps();
+    }
+
+    // Relasi: Tugas-tugas yang dibuat oleh user ini
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }
