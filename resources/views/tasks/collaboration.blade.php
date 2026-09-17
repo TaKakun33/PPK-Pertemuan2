@@ -6,7 +6,6 @@
 </head>
 <body>
 
-    <!-- Notifikasi Pesan Sukses / Error -->
     @if(session('success'))
         <p style="color: green;"><strong>[SUKSES]</strong> {{ session('success') }}</p>
     @endif
@@ -23,7 +22,7 @@
         </ul>
     @endif
 
-    <!-- INFORMASI TUGAS -->
+
     <h1>Detail Tugas: {{ $task->nama_tugas }}</h1>
     <p><strong>Prioritas:</strong> {{ $task->prioritas ?? '-' }}</p>
     <p><strong>Tenggat Waktu:</strong> {{ $task->tenggat_waktu ?? '-' }}</p>
@@ -31,7 +30,6 @@
 
     <hr>
 
-    <!-- FR-06: UBAH STATUS TUGAS -->
     <h2>Ubah Status Tugas (FR-06)</h2>
     <p>Status Saat Ini: <strong>{{ $task->status }}</strong></p>
 
@@ -49,7 +47,7 @@
 
     <hr>
 
-    <!-- FR-05: TAMBAH KOLABORATOR -->
+
     <h2>Kolaborasi Tim (FR-05)</h2>
 
     <h3>Tambah Kolaborator Baru</h3>
@@ -67,7 +65,7 @@
 
     <br>
 
-    <!-- DAFTAR KOLABORATOR -->
+
     <h3>Daftar Kolaborator Saat Ini</h3>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
