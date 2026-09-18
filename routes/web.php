@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskCollaborationController;
+use App\Http\Controllers\TaskListController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -41,3 +42,11 @@ Route::get('/tasks', function () {
 
 Route::get('/tasks/create', [TaskController::class, 'create'])->middleware('auth')->name('tasks.create'); // Sekalian ditambahkan namanya agar rapi
 Route::post('/tasks', [TaskController::class, 'store'])->middleware('auth')->name('tasks.store'); // Sekalian ditambahkan namanya agar rapi
+// FR-12: seluruh rute daftar tugas dilindungi middleware 'auth'.
+// Permintaan dari pengguna yang belum login akan ditolak (redirect ke /login).
+Route::middleware('auth')->group(function () {
+    Route::get('/task-lists', [TaskListController::class, 'index'])->name('task-lists.index');
+    Route::get('/task-lists/create', [TaskListController::class, 'create'])->name('task-lists.create');
+    Route::post('/task-lists', [TaskListController::class, 'store'])->name('task-lists.store');
+});
+ 
