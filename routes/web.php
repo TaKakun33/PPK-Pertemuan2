@@ -1,10 +1,15 @@
 <?php
 
+use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TaskCollaborationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskListController;
 use App\Models\Task;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TaskCollaborationController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskListController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,9 +24,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/home', function () {
     return view('home');
 })->middleware('auth')->name('home');
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
+
+// FR-07: Dashboard monitoring dengan data asli (bukan lagi dummy)
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware('auth')
+    ->name('dashboard');
+
 // Rute untuk Modul Kolaborasi & Status Tugas (P3)
 Route::middleware('auth')->group(function () {
     Route::get('/tasks/{id}/collaboration', [TaskCollaborationController::class, 'show'])->name('tasks.collaboration.show');
@@ -47,3 +55,23 @@ Route::get('/tasks', function () {
 
 Route::get('/tasks/create', [TaskController::class, 'create'])->middleware('auth')->name('tasks.create'); // Sekalian ditambahkan namanya agar rapi
 Route::post('/tasks', [TaskController::class, 'store'])->middleware('auth')->name('tasks.store'); // Sekalian ditambahkan namanya agar rapi
+Route::middleware('auth')->group(function () {
+    Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+
+    // FR-01: User membuat & mengelola daftar tugas (kategori) sendiri
+    Route::get('/task-lists', [TaskListController::class, 'index'])->name('task-lists.index');
+    Route::post('/task-lists', [TaskListController::class, 'store'])->name('task-lists.store');
+    Route::delete('/task-lists/{id}', [TaskListController::class, 'destroy'])->name('task-lists.destroy');
+});
+
+// FR-08/FR-09: Admin mengelola akun User (khusus role admin)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+});

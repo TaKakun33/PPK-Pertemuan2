@@ -29,6 +29,8 @@
                             <th style="width: 50px;">No</th>
                             <th>Judul Tugas</th>
                             <th>Kategori Tugas</th>
+                            <th>Prioritas</th>
+                            <th>Tenggat Waktu</th>
                             <th>Pemilik</th>
                             <th>Status</th>
                             <th style="text-align: right; width: 180px;">Aksi</th>
@@ -45,6 +47,22 @@
                                     <span class="badge" style="background: #f1f5f9; color: #475569;">
                                         {{ $task->category_name }}
                                     </span>
+                                </td>
+                                <td>
+                                    @php
+                                        $prioritasColor = match($task->prioritas) {
+                                            'Tinggi' => 'background: #fee2e2; color: #991b1b;',
+                                            'Rendah' => 'background: #f1f5f9; color: #475569;',
+                                            default => 'background: #fef3c7; color: #92400e;',
+                                        };
+                                    @endphp
+                                    <span class="badge" style="{{ $prioritasColor }}">{{ $task->prioritas ?? '-' }}</span>
+                                </td>
+                                <td>
+                                    {{ $task->tenggat_waktu ? $task->tenggat_waktu->format('d M Y') : '-' }}
+                                    @if ($task->is_overdue)
+                                        <br><small style="color: #dc2626; font-weight: 600;">Terlambat</small>
+                                    @endif
                                 </td>
                                 <td>
                                     @if ($task->user_id === Auth::id())
