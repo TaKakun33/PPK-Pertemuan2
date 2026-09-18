@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TaskController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskCollaborationController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskListController;
+use App\Models\Task;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -26,16 +28,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/{id}/collaborators', [TaskCollaborationController::class, 'addCollaborator'])->name('tasks.collaborators.add');
     Route::delete('/tasks/{taskId}/collaborators/{userId}', [TaskCollaborationController::class, 'removeCollaborator'])->name('tasks.collaborators.remove');
     Route::patch('/tasks/{id}/status', [TaskCollaborationController::class, 'updateStatus'])->name('tasks.status.update');
+
+    // FR-13 / FR-14 / FR-15: Hapus daftar tugas milik owner
+    Route::delete('/task-lists/{ownerId}/{taskListId}', [TaskListController::class, 'destroy'])->name('task-lists.destroy');
 });
 
 Route::get('/tasks', function () {
     $user = auth()->user();
-    $tasks = \App\Models\Task::where('user_id', $user->id)
+    $tasks = Task::where('user_id', $user->id)
         ->orWhereHas('collaborators', function ($query) use ($user) {
             $query->where('users.id', $user->id);
         })
         ->latest()
         ->get();
+
     return view('tasks.index', ['tasks' => $tasks]);
 })->middleware('auth')->name('tasks.index'); // <--- TAMBAHKAN INI
 
