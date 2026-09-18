@@ -19,7 +19,18 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.process');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/home', function () {
-    return view('home');
+    $user = auth()->user();
+    $pendingTasks = \App\Models\Task::with('taskList')
+        ->where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhereHas('collaborators', fn ($q) => $q->where('users.id', $user->id));
+        })
+        ->whereIn('status', ['Belum Dikerjakan', 'Sedang Dikerjakan'])
+        ->orderByRaw("FIELD(prioritas, 'Tinggi', 'Sedang', 'Rendah')")
+        ->orderBy('tenggat_waktu')
+        ->get();
+
+    return view('home', compact('pendingTasks'));
 })->middleware('auth')->name('home');
 
 // FR-07: Dashboard monitoring dengan data asli (bukan lagi dummy)
@@ -33,9 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/tasks/{id}/collaborators', [TaskCollaborationController::class, 'addCollaborator'])->name('tasks.collaborators.add');
     Route::delete('/tasks/{taskId}/collaborators/{userId}', [TaskCollaborationController::class, 'removeCollaborator'])->name('tasks.collaborators.remove');
     Route::patch('/tasks/{id}/status', [TaskCollaborationController::class, 'updateStatus'])->name('tasks.status.update');
-
-    // FR-13 / FR-14 / FR-15: Hapus daftar tugas milik owner
-    Route::delete('/task-lists/{ownerId}/{taskListId}', [TaskListController::class, 'destroy'])->name('task-lists.destroy');
 });
 
 Route::get('/tasks', function () {

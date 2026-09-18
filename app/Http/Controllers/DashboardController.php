@@ -68,6 +68,11 @@ class DashboardController extends Controller
             ];
         }
 
+        // Tugas yang belum selesai (untuk ditampilkan di beranda)
+        $pendingTasks = $myTasks
+            ->whereIn('status', ['Belum Dikerjakan', 'Sedang Dikerjakan'])
+            ->sortBy('tenggat_waktu');
+
         return view('dashboard', [
             'statusCounts' => $statusCounts,
             'totalTugas' => $myTasks->count(),
@@ -76,6 +81,7 @@ class DashboardController extends Controller
             'recentTasks' => $recentTasks,
             'teamSummary' => $teamSummary,
             'systemSummary' => $systemSummary,
+            'pendingTasks' => $pendingTasks,
         ]);
     }
 }

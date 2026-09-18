@@ -22,13 +22,13 @@ class TaskListController extends Controller
             ->latest()
             ->get();
 
-        return view('task_lists.index', compact('taskLists'));
+        return view('task-lists.index', compact('taskLists'));
     }
 
     /** Form pembuatan daftar tugas */
     public function create()
     {
-        return view('task_lists.create');
+        return view('task-lists.create');
     }
 
     /**
@@ -70,5 +70,40 @@ class TaskListController extends Controller
         return redirect()
             ->route('task-lists.index')
             ->with('success', "Daftar tugas \"{$taskList->nama}\" berhasil dibuat.");
+    }
+
+    /**
+     * FR-13/FR-14/FR-15: Hapus daftar tugas.
+     * Hanya owner yang boleh menghapus.
+     */
+    public function destroy(Request $request, $id)
+    {
+        $user = $request->user();
+        $taskList = TaskList::findOrFail($id);
+
+        // Pastikan hanya owner yang bisa hapus
+        if ($taskList->user_id !== $user->id) {
+            return back()->with('error', 'Anda tidak memiliki izin untuk menghapus daftar tugas ini.');
+        }
+
+        try {
+            DB::transaction(function () use ($taskList) {
+                // Hapus relasi pivot dulu
+                $taskList->members()->detach();
+                // Hapus daftar tugas
+                $taskList->delete();
+            });
+        } catch (Throwable $e) {
+            Log::error('Gagal menghapus daftar tugas', [
+                'task_list_id' => $taskList->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Gagal menghapus daftar tugas.');
+        }
+
+        return redirect()
+            ->route('task-lists.index')
+            ->with('success', "Daftar tugas \"{$taskList->nama}\" berhasil dihapus.");
     }
 }

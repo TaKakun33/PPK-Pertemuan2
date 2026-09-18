@@ -72,7 +72,7 @@
                                 <td><strong>{{ $list->nama }}</strong></td>
                                 <td>{{ $list->tasks_count }} tugas</td>
                                 <td style="text-align: right;">
-                                    <form action="{{ route('task-lists.destroy', [$list->user_id, $list->id]) }}" method="POST" style="margin: 0;">
+                                    <form action="{{ route('task-lists.destroy', $list->id) }}" method="POST" style="margin: 0;">
                                         @csrf
                                         @method('DELETE')
                                         <button
