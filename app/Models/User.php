@@ -42,5 +42,15 @@ class User extends Authenticatable
         return $this->hasMany(Task::class);
     }
 
-    
+    // Relasi: Daftar tugas (kategori) milik user ini (FR-01)
+    public function taskLists()
+    {
+        return $this->hasMany(TaskList::class);
+    }
+
+    // FR-08/FR-09: helper untuk cek apakah user adalah admin
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
 }
