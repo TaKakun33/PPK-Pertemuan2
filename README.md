@@ -46,6 +46,12 @@ Pengguna umum (mahasiswa, karyawan) yang membutuhkan alat bantu pengelolaan tuga
 | FR-07 | Sistem harus menyediakan fitur **monitoring** agar User/Admin dapat memantau perkembangan tugas dan tim |
 | FR-08 | Sistem harus memiliki **manajemen user** dengan 3 peran: Admin, User, dan Kolaborator |
 | FR-09 | Admin dapat mengelola (menambah/menghapus/mengatur) akun User dalam sistem |
+| FR-10 | Sistem harus memungkinkan User membuat daftar tugas baru, di mana User tersebut **otomatis ditetapkan sebagai pemilik (owner)** dari daftar tugas yang dibuat |
+| FR-11 | Proses pembuatan daftar tugas beserta penetapan kepemilikannya **harus berjalan secara atomik** (satu transaksi database); jika salah satu langkah (pembuatan daftar atau penetapan owner) gagal, seluruh perubahan wajib dibatalkan (rollback) |
+| FR-12 | Sistem harus **menolak** permintaan pembuatan daftar tugas yang berasal dari pengguna yang tidak berwenang (belum login/tidak memiliki hak akses) |
+| FR-13 | Pemilik (owner) suatu daftar tugas dapat **menghapus daftar tugas** miliknya beserta **seluruh tugas** dan **seluruh data keanggotaan/kolaborator** yang terkait dengan daftar tersebut |
+| FR-14 | Proses penghapusan daftar tugas beserta tugas dan keanggotaan di dalamnya **harus berjalan secara atomik**; jika salah satu langkah penghapusan gagal (misal gagal menghapus tugas atau gagal menghapus keanggotaan), maka seluruh proses penghapusan dibatalkan (rollback) sehingga data tidak berada dalam kondisi tidak konsisten |
+| FR-15 | Sistem harus **menolak** permintaan penghapusan daftar tugas yang diajukan oleh pengguna yang **bukan pemilik** daftar tersebut (tidak berwenang) |
 
 ---
 
@@ -57,3 +63,6 @@ Pengguna umum (mahasiswa, karyawan) yang membutuhkan alat bantu pengelolaan tuga
 | NFR-02 | Sistem harus dapat diakses melalui web dan/atau mobile |
 | NFR-03 | Data tugas harus tersimpan secara aman dan hanya dapat diakses oleh pihak yang berwenang (Admin/User/Kolaborator terkait) |
 | NFR-04 | Sistem harus responsif saat mengelola banyak tugas/daftar tugas |
+| NFR-05 | Seluruh input pengguna pada operasi pembuatan maupun penghapusan daftar tugas **wajib divalidasi** dan dieksekusi menggunakan **prepared statement/parameterized query**, sehingga sistem terhindar dari celah **SQL Injection** |
+| NFR-06 | Setiap operasi yang melibatkan lebih dari satu perubahan data terkait (multi-step), seperti pembuatan daftar tugas beserta kepemilikannya (FR-10, FR-11) dan penghapusan daftar tugas beserta tugas & keanggotaan di dalamnya (FR-13, FR-14), **wajib bersifat atomik** menggunakan transaksi database (database transaction), memastikan tidak ada perubahan sebagian (partial update) apabila terjadi kegagalan |
+| NFR-07 | Sistem harus menerapkan **pengecekan otorisasi (authorization check)** pada setiap operasi sensitif (pembuatan maupun penghapusan daftar tugas), dan menolak permintaan (403/akses ditolak) dari pengguna yang tidak berwenang atau bukan pemilik sumber daya terkait |
