@@ -27,16 +27,27 @@
             @csrf
 
             <div class="form-group">
-                <label for="task_list_id">Kategori Tugas</label>
-                <select id="task_list_id" name="task_list_id" class="form-control" required>
-                    <option value="">-- Pilih Kategori Tugas --</option>
-                    <option value="1" {{ old('task_list_id', $task_list_id ?? '') == '1' ? 'selected' : '' }}>Tugas Kuliah</option>
-                    <option value="2" {{ old('task_list_id', $task_list_id ?? '') == '2' ? 'selected' : '' }}>Tugas Kantor</option>
-                    <option value="3" {{ old('task_list_id', $task_list_id ?? '') == '3' ? 'selected' : '' }}>Proyek Pribadi</option>
-                    <option value="4" {{ old('task_list_id', $task_list_id ?? '') == '4' ? 'selected' : '' }}>Organisasi</option>
-                    <option value="5" {{ old('task_list_id', $task_list_id ?? '') == '5' ? 'selected' : '' }}>Lainnya</option>
-                </select>
-                <small class="text-muted">Pilih kategori daftar tugas yang sesuai.</small>
+                <label for="task_list_id">Daftar Tugas (Kategori)</label>
+                @if ($taskLists->isEmpty())
+                    <div class="alert alert-error" style="margin-bottom: 12px;">
+                        Anda belum punya daftar tugas. Silakan
+                        <a href="{{ route('task-lists.index') }}" style="font-weight: 700;">buat daftar tugas</a>
+                        terlebih dahulu sebelum menambahkan tugas.
+                    </div>
+                @else
+                    <select id="task_list_id" name="task_list_id" class="form-control" required>
+                        <option value="">-- Pilih Daftar Tugas --</option>
+                        @foreach ($taskLists as $list)
+                            <option value="{{ $list->id }}" {{ old('task_list_id', $task_list_id ?? '') == $list->id ? 'selected' : '' }}>
+                                {{ $list->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <small class="text-muted">
+                        Tidak menemukan daftar yang sesuai?
+                        <a href="{{ route('task-lists.index') }}">Buat daftar tugas baru</a>.
+                    </small>
+                @endif
             </div>
 
             <div class="form-group">
@@ -52,8 +63,31 @@
                 >
             </div>
 
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label for="prioritas">Prioritas</label>
+                    <select id="prioritas" name="prioritas" class="form-control" required>
+                        <option value="Rendah" {{ old('prioritas') == 'Rendah' ? 'selected' : '' }}>Rendah</option>
+                        <option value="Sedang" {{ old('prioritas', 'Sedang') == 'Sedang' ? 'selected' : '' }}>Sedang</option>
+                        <option value="Tinggi" {{ old('prioritas') == 'Tinggi' ? 'selected' : '' }}>Tinggi</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tenggat_waktu">Tenggat Waktu</label>
+                    <input 
+                        type="date" 
+                        id="tenggat_waktu" 
+                        name="tenggat_waktu" 
+                        class="form-control" 
+                        value="{{ old('tenggat_waktu') }}" 
+                        required
+                    >
+                </div>
+            </div>
+
             <div style="display: flex; gap: 12px; margin-top: 24px;">
-                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;" {{ $taskLists->isEmpty() ? 'disabled' : '' }}>
                     💾 Simpan Tugas
                 </button>
                 <a href="{{ route('tasks.index') }}" class="btn btn-secondary">
