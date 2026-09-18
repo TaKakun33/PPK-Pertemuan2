@@ -218,8 +218,13 @@
                 <a href="{{ route('home') }}" class="brand">JARA</a>
                 <nav class="nav-links">
                     <a href="{{ route('home') }}">Beranda</a>
-                    <a href="{{ route('tasks.index') }}">Daftar Tugas</a>
+                    <a href="{{ route('dashboard') }}">Dashboard</a>
+                    <a href="{{ route('tasks.index') }}">Tugas</a>
+                    <a href="{{ route('task-lists.index') }}">Kategori</a>
                     <a href="{{ route('tasks.create') }}">+ Tambah Tugas</a>
+                    @if (Auth::user()->isAdmin())
+                        <a href="{{ route('admin.users.index') }}">Kelola User</a>
+                    @endif
                 </nav>
             </div>
             <div class="nav-right">
