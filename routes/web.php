@@ -52,13 +52,19 @@ Route::get('/tasks', function () {
 
 Route::get('/tasks/create', [TaskController::class, 'create'])->middleware('auth')->name('tasks.create'); // Sekalian ditambahkan namanya agar rapi
 Route::post('/tasks', [TaskController::class, 'store'])->middleware('auth')->name('tasks.store'); // Sekalian ditambahkan namanya agar rapi
+// FR-12: seluruh rute daftar tugas dilindungi middleware 'auth'.
+// Permintaan dari pengguna yang belum login akan ditolak (redirect ke /login).
+ 
 Route::middleware('auth')->group(function () {
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
     Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
 
     // FR-01: User membuat & mengelola daftar tugas (kategori) sendiri
+    // FR-12: seluruh rute daftar tugas dilindungi middleware 'auth'.
+    // Permintaan dari pengguna yang belum login akan ditolak (redirect ke /login).
     Route::get('/task-lists', [TaskListController::class, 'index'])->name('task-lists.index');
+    Route::get('/task-lists/create', [TaskListController::class, 'create'])->name('task-lists.create');
     Route::post('/task-lists', [TaskListController::class, 'store'])->name('task-lists.store');
     Route::delete('/task-lists/{id}', [TaskListController::class, 'destroy'])->name('task-lists.destroy');
 });

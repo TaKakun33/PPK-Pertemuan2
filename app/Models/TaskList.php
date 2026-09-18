@@ -6,17 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 
 class TaskList extends Model
 {
-    protected $fillable = ['user_id', 'nama'];
+    protected $table = 'task_lists';
 
-    // Pemilik daftar tugas
+    protected $fillable = ['nama', 'deskripsi', 'user_id'];
+
+    /** Pemilik daftar tugas (FR-10) */
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Semua tugas yang masuk ke dalam daftar tugas ini
+    /** Seluruh anggota: owner + kolaborator */
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'task_list_user')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    /** Tugas-tugas di dalam daftar ini */
     public function tasks()
     {
         return $this->hasMany(Task::class, 'task_list_id');
+    }
+
+    /** Helper untuk pengecekan otorisasi (FR-12 / FR-15) */
+    public function isOwnedBy(?User $user): bool
+    {
+        return $user !== null && (int) $this->user_id === (int) $user->id;
     }
 }
